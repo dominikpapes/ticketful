@@ -2,11 +2,14 @@ import express from 'express'
 import fs from 'fs';
 import https from 'https';
 import path from "path";
+import dotenv from "dotenv";
 import { auth, requiresAuth } from 'express-openid-connect';
 import {getAll, getCountTickets, getOne, newTicket} from "./db_access";
 import {generateQRCode, getAccessToken, verifyToken} from "./utility";
+dotenv.config();
 
 const app = express()
+
 
 const host = process.env.HOST
 const port = process.env.PORT
@@ -30,6 +33,7 @@ const config = {
         scope: "openid profile email"
     },
 };
+
 
 app.use(auth(config));
 

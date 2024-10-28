@@ -2,12 +2,12 @@
   "name": "ticketful",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/app.js",
   "scripts": {
     "build": "npm run clean && tsc && npm run copy-files",
     "clean": "rm -rf dist",
     "copy-files": "cp -r src/views/ dist",
-    "start": "node dist/index.js"
+    "start": "node dist/app.js"
   },
   "dependencies": {
     "@types/pg": "^8.11.10",
