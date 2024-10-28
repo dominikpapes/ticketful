@@ -81,7 +81,7 @@ app.post('/generate', async (req, res) => {
         const count = await getCountTickets(vatin);
         if (count < 3) { // Check if count is less than 3 to allow new ticket creation
             const uuid = await newTicket(vatin, firstName, lastName);// Create new ticket, returns uuid
-            const ticket_url_qr = `${externalUrl}/tickets/${uuid}`;
+            const ticket_url_qr = `${externalUrl}/ticket/${uuid}`;
             const ticket_url_local = '/ticket/' + uuid;
             const qr = await generateQRCode(ticket_url_qr);
             return res.json({ message: 'Ticket created successfully.', qr: qr, ticket_url: ticket_url_local}); // Send success response
