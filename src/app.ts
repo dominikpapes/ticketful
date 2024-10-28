@@ -8,8 +8,6 @@ import {generateQRCode, getAccessToken, verifyToken} from "./utility";
 
 const app = express()
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 const host = process.env.HOST
 const port = process.env.PORT
 const hostname = process.env.HOST_NAME

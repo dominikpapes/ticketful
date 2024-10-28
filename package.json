@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run clean && tsc && npm run copy-files",
-    "clean": "shx rm -rf dist",
-    "copy-files": "shx cp -r src/views/ dist",
+    "clean": "rm -rf dist",
+    "copy-files": "cp -r src/views/ dist",
     "start": "node dist/index.js"
   },
   "dependencies": {
