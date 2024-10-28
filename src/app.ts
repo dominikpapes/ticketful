@@ -12,8 +12,10 @@ const app = express()
 
 
 const host = process.env.HOST
-const port = process.env.PORT
 const hostname = process.env.HOST_NAME
+
+const externalUrl = process.env.RENDER_EXTERNAL_URL;
+const port = externalUrl && process.env.PORT ? parseInt(process.env.PORT) : 4080;
 
 app.use(express.json())
 
@@ -24,7 +26,7 @@ const config = {
     authRequired : false,
     idpLogout : true,
     secret: process.env.SECRET,
-    baseURL: `https://${host}:${port}`,
+    baseURL: externalUrl || `https://localhost:${port}`,
     clientID: process.env.CLIENT_ID,
     issuerBaseURL: process.env.DOMAIN,
     clientSecret: process.env.CLIENT_SECRET,
@@ -79,7 +81,7 @@ app.post('/generate', async (req, res) => {
         const count = await getCountTickets(vatin);
         if (count < 3) { // Check if count is less than 3 to allow new ticket creation
             const uuid = await newTicket(vatin, firstName, lastName);// Create new ticket, returns uuid
-            const ticket_url_qr = `https://${hostname}/tickets/${uuid}`;
+            const ticket_url_qr = `${externalUrl}/tickets/${uuid}`;
             const ticket_url_local = '/ticket/' + uuid;
             const qr = await generateQRCode(ticket_url_qr);
             return res.json({ message: 'Ticket created successfully.', qr: qr, ticket_url: ticket_url_local}); // Send success response
@@ -132,6 +134,17 @@ app.post('/generate', async (req, res) => {
 //         console.log(`Server running at https://${host}:${port}/`);
 //     });
 
-app.listen(port, () => {
-    console.log(`Server running at https://localhost:${port}/`);
-});
+if (externalUrl) {
+    const hostname = '0.0.0.0'; //ne 127.0.0.1
+    app.listen(port, hostname, () => {
+        console.log(`Server locally running at http://${hostname}:${port}/ and from outside on ${externalUrl}`);
+    });
+} else {
+    https.createServer({
+        key: fs.readFileSync('server.key'),
+        cert: fs.readFileSync('server.cert')
+    }, app)
+        .listen(port, function () {
+            console.log(`Server running at https://localhost:${port}/`);
+        });
+}
