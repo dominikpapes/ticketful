@@ -124,10 +124,14 @@ app.post('/generate', async (req, res) => {
 //     }
 // })
 
-https.createServer({
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.cert')
-}, app)
-    .listen(port, function () {
-        console.log(`Server running at https://${host}:${port}/`);
-    });
+// https.createServer({
+//     key: fs.readFileSync('server.key'),
+//     cert: fs.readFileSync('server.cert')
+// }, app)
+//     .listen(port, function () {
+//         console.log(`Server running at https://${host}:${port}/`);
+//     });
+
+app.listen(port, () => {
+    console.log(`Server running at https://localhost:${port}/`);
+});
