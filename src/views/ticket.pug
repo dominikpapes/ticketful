@@ -1,0 +1,24 @@
+extends layout
+
+block content
+    .container.mt-3
+        .row
+            .col-6
+                h3 Ticket Information
+            .col-6.text-end
+                h3 Username: #{user_name}
+        table.table.mt-3
+            thead
+                tr
+                    th Ticket ID
+                    th Created at
+                    th VATIN
+                    th First Name
+                    th Last Name
+            tbody
+                tr
+                    td #{ticketId}
+                    td #{created_at}
+                    td #{vatin}
+                    td #{firstName}
+                    td #{lastName}

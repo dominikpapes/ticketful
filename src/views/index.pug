@@ -1,0 +1,98 @@
+extends layout
+
+block content
+    .container
+        .row
+            .col-md-6.offset-md-3
+                h1.text-center.mt-5 Ticketful
+                p.lead.text-center Tickets generated: #{count}
+                .d-flex.justify-content-center
+                    a.btn.btn-success.btn-lg.mt-3(type="button" data-bs-toggle="modal", data-bs-target="#ticketModal")
+                        | Generate a ticket
+
+    .modal.fade#ticketModal(tabindex="-1", aria-labelledby="ticketModalLabel", aria-hidden="true")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    h5.modal-title#ticketModalLabel Enter ticket details
+                    button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+                .modal-body
+                    // Form for ticket details
+                    form#ticketForm(onsubmit="handleFormSubmit(event)")
+                        .mb-3
+                            label.form-label(for="vatin") OIB
+                            input.form-control(type="text", id="vatin", name="vatin", required=true, placeholder="Enter OIB",
+                                minlength="10", maxlength="10", pattern="\\d{10}")
+                            small.text-muted OIB must be a 10 digit number.
+                        .mb-3
+                            label.form-label(for="firstname") First Name
+                            input.form-control(type="text", id="firstname", name="firstname", required=true, placeholder="Enter First Name")
+                        .mb-3
+                            label.form-label(for="lastname") Last Name
+                            input.form-control(type="text", id="lastname", name="lastname", required=true, placeholder="Enter Last Name")
+                        button.btn.btn-primary(type="submit") OK
+
+                    // Placeholder for QR code and success message (initially hidden)
+                    a.mt-3#qrContainer(style="display: none;")
+                        p.text-success Ticket successfully generated, scan the QR code or click the link for more info.
+                        img#qrCodeImage(src="", alt="QR Code", style="width: 100%;")
+
+                    // Bootstrap alert for error messages
+                    .alert.alert-danger.mt-3#alertContainer(style="display: none;")
+                        | An error occurred while generating the ticket. Please try again.
+
+    // JavaScript to reset form and hide elements on modal open
+    script.
+        let ticketModal = document.getElementById('ticketModal');
+        ticketModal.addEventListener('hidden.bs.modal', function () {
+            document.getElementById('ticketForm').reset();
+            document.getElementById('ticketForm').style.display = 'block';
+            document.getElementById('qrContainer').style.display = 'none';
+            document.getElementById('alertContainer').style.display = 'none';  // Hide alert on modal close
+        });
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();  // Prevent default form submission
+
+            document.getElementById('ticketForm').style.display = 'none';
+            document.getElementById('alertContainer').style.display = 'none';  // Hide alert when submitting
+
+            // Prepare the data to be sent
+            const postData = {
+                vatin: document.getElementById('vatin').value,
+                firstName: document.getElementById('firstname').value,
+                lastName: document.getElementById('lastname').value
+            };
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData)
+                });
+
+                const data = await response.json();
+
+                console.log(data)
+
+                if (response.ok) {
+                    const qrContainer = document.getElementById('qrContainer');
+                    const qrCodeImage = document.getElementById('qrCodeImage');
+                    document.getElementById('qrContainer').href = data.ticket_url;
+                    qrCodeImage.src = data.qr;
+                    qrContainer.style.display = 'block';
+                } else {
+                    // Show the error message
+                    const alertContainer = document.getElementById('alertContainer');
+                    alertContainer.style.display = 'block'; // Show alert
+                    alertContainer.innerHTML = data.error || 'An unexpected error occurred. Please try again.'; // Set error message
+                }
+            } catch (error) {
+                console.error('Error fetching ticket count:', error);
+                const alertContainer = document.getElementById('alertContainer');
+                alertContainer.style.display = 'block'; // Show alert
+                alertContainer.innerHTML = 'An error occurred while processing your request. Please try again.'; // Set error message
+            }
+        }

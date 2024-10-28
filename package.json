@@ -1,0 +1,30 @@
+{
+  "name": "ticketful",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npm run clean && tsc && npm run copy-files",
+    "clean": "shx rm -rf dist",
+    "copy-files": "shx cp -r src/views/ dist",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@types/pg": "^8.11.10",
+    "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-openid-connect": "^2.17.1",
+    "pg": "^8.13.1",
+    "pug": "^3.0.3",
+    "qrcode": "^1.5.4",
+    "shx": "^0.3.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/qrcode": "^1.5.5",
+    "typescript": "^5.5.3"
+  },
+  "private": true
+}
